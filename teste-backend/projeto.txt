@@ -1,0 +1,103 @@
+Descrição do Projeto
+Objetivo:
+Este é um projeto Spring Boot para a criação de uma API RESTful de gerenciamento de pedidos de uma loja online. A API permite o gerenciamento de pedidos, produtos, e pagamentos, implementando funcionalidades como criação, atualização, exclusão e listagem. A solução também incorpora segurança robusta com autenticação JWT, garantindo que apenas usuários autenticados possam realizar operações sensíveis.
+
+Funcionalidades Implementadas:
+1. Gerenciamento de Pedidos:
+Criação de Pedidos: Permite a criação de um novo pedido, com a adição de itens ao pedido e o cálculo do valor total.
+
+Atualização de Pedidos: Permite atualizar o status e os detalhes do pedido.
+
+Exclusão de Pedidos: Permite a exclusão de pedidos com base no ID.
+
+2. Gerenciamento de Produtos:
+Cadastro de Produtos: Permite o registro de novos produtos no sistema, com informações como nome, preço e descrição.
+
+Atualização de Produtos: Permite atualizar os dados de produtos existentes.
+
+Exclusão de Produtos: Permite remover produtos do banco de dados.
+
+3. Gerenciamento de Pagamentos:
+Registro de Pagamento: Registra o pagamento de um pedido, com a definição do método de pagamento (cartão de crédito, boleto, etc.), valor, e status.
+
+Atualização de Status de Pagamento: Permite atualizar o status de um pagamento, como de "Pendente" para "Confirmado".
+
+4. Autenticação e Autorização com JWT:
+A autenticação da API é feita utilizando JSON Web Tokens (JWT). Com isso, os usuários devem passar um token JWT válido em todas as requisições que exigem autenticação, como criação de pedidos e pagamentos. A Spring Security foi configurada para garantir a proteção das rotas.
+
+Login e Geração de Token JWT: Após a autenticação com as credenciais do usuário (nome de usuário e senha), um token JWT é gerado e retornado. Esse token deve ser incluído nas requisições subsequentes no cabeçalho Authorization no formato Bearer <token>.
+
+Validação de Token JWT: O token JWT é validado em todas as requisições protegidas, garantindo que apenas usuários autenticados possam acessar recursos como criação de pedidos e pagamentos.
+
+5. Documentação da API com Swagger:
+Toda a API foi documentada usando Swagger (OpenAPI). Isso permite que os desenvolvedores e usuários da API visualizem e testem os endpoints diretamente na interface gerada pelo Swagger UI.
+
+Documentação de Endpoints: Cada endpoint da API, incluindo as rotas para pedidos, produtos, pagamentos, e autenticação, está documentado.
+
+Swagger UI: Interface gráfica para visualização e teste dos endpoints de forma interativa.
+
+6. Camadas de Segurança:
+A segurança da aplicação foi implementada em várias camadas para garantir a proteção dos dados e operações críticas. As principais camadas de segurança incluem:
+
+Spring Security: Protege todos os endpoints da API e garante que apenas usuários autenticados possam acessar rotas sensíveis.
+
+Autenticação com JWT: O uso de JWT garante que a autenticação seja mantida em todas as requisições após o login inicial.
+
+Role-Based Access Control (RBAC): Baseado em perfis de usuário, a aplicação implementa controle de acesso para diferentes funções. Apenas administradores podem realizar ações como exclusão de pedidos.
+
+Criptografia de Senhas: As senhas dos usuários são criptografadas usando o algoritmo BCrypt antes de serem armazenadas no banco de dados.
+
+Proteção contra CSRF: A proteção contra ataques Cross-Site Request Forgery (CSRF) foi configurada para ser desabilitada nas rotas que utilizam JWT.
+
+Métodos Implementados e Detalhes de Segurança:
+1. Métodos de Autenticação (JWT)
+POST /auth/login: Realiza o login do usuário e retorna um token JWT.
+
+Requisição:
+
+json
+Copiar
+{
+    "username": "usuário",
+    "password": "senha"
+}
+Resposta:
+
+json
+Copiar
+{
+    "token": "<JWT-TOKEN>"
+}
+2. Endpoints de Pedidos
+POST /api/pedidos: Criação de um novo pedido com itens.
+
+GET /api/pedidos/{id}: Consulta detalhada de um pedido.
+
+PUT /api/pedidos/{id}: Atualização de um pedido existente.
+
+DELETE /api/pedidos/{id}: Exclusão de um pedido.
+
+3. Endpoints de Produtos
+POST /api/produtos: Cadastro de um novo produto.
+
+GET /api/produtos/{id}: Consulta detalhada de um produto.
+
+PUT /api/produtos/{id}: Atualização de um produto.
+
+DELETE /api/produtos/{id}: Exclusão de um produto.
+
+4. Endpoints de Pagamentos
+POST /api/pagamentos: Registro de um pagamento para um pedido.
+
+PUT /api/pagamentos/{id}: Atualização do status de um pagamento.
+
+Tecnologias Usadas:
+Spring Boot: Framework principal para o desenvolvimento da API.
+
+Spring Data JPA: Para comunicação com o banco de dados PostgreSQL usando JPA.
+
+Spring Security: Para implementar autenticação e autorização com JWT.
+
+Swagger/OpenAPI: Para gerar e expor a documentação da API.
+
+PostgreSQL: Banco de dados relacional utilizado para armazenar os dados.
