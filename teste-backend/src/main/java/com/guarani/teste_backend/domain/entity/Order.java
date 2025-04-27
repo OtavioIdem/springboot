@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.guarani.teste_backend.domain.enums.OrderStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,7 +16,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +42,8 @@ public class Order {
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime updatedAt;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -51,16 +57,32 @@ public class Order {
     )
     private List<Product> products;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pagamento_id")
+    private Pagamento pagamento;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pedido_id")
+    private List<PedidoItem> itens;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(); 
         this.status = OrderStatus.AGUARDANDO_PAGAMENTO;
     }
 
-    public void calculateTotal() {
-        this.total = products.stream()
-            .map(Product::getPrice)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    @PreUpdate
+    public void preUpdate() { 
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void calcularValorTotal(BigDecimal descontoPercentual, BigDecimal frete) {
+        BigDecimal subtotal = itens.stream()
+                .map(PedidoItem::getPrecoTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    
+        BigDecimal desconto = subtotal.multiply(descontoPercentual).divide(BigDecimal.valueOf(100));
+        this.valorTotal = subtotal.subtract(desconto).add(frete);
     }
 }
-    
