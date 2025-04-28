@@ -6,22 +6,8 @@ import java.util.List;
 
 import com.guarani.teste_backend.domain.enums.OrderStatus;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "orders")
@@ -43,6 +29,10 @@ public class Order {
 
     private BigDecimal total;
 
+    private BigDecimal freightAmount;
+
+    private BigDecimal discountAmount;
+
     @ManyToMany
     @JoinTable(
         name = "order_products",
@@ -58,9 +48,20 @@ public class Order {
     }
 
     public void calculateTotal() {
-        this.total = products.stream()
+        BigDecimal productsTotal = products.stream()
             .map(Product::getPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Aplicando um valor fixo de frete e um desconto percentual
+        BigDecimal freightFixed = new BigDecimal("15.00");
+        BigDecimal discountPercentage = new BigDecimal("0.10"); // 10%
+
+        BigDecimal discountValue = productsTotal.multiply(discountPercentage);
+
+        this.freightAmount = freightFixed;
+        this.discountAmount = discountValue;
+
+        this.total = productsTotal.add(freightFixed).subtract(discountValue);
     }
 }
     
