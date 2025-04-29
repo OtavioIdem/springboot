@@ -23,8 +23,8 @@ API REST para gerenciamento de pedidos, produtos e pagamentos, utilizando Java 1
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/orders-api.git
-cd orders-api
+git clone [https://github.com/seu-usuario/orders-api.git](https://github.com/OtavioIdem/springboot.git)
+cd teste-backend
 ```
 
 ### 2. Configure seu Banco de Dados PostgreSQL
