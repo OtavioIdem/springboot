@@ -23,6 +23,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final RabbitMQService rabbitMQService; 
 
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -44,7 +45,12 @@ public class OrderService {
         .build();
 
         order.calculateTotal();
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+         // Envia evento para RabbitMQ
+         rabbitMQService.sendOrderCreatedMessage("Order created with ID: " + savedOrder.getId());
+
+         return savedOrder;
     }
 
     @Transactional

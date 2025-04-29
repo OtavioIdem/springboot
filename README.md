@@ -1,8 +1,6 @@
 # Orders API
 
-API REST para gerenciamento de pedidos, produtos e pagamentos.
-
-Projetado com arquitetura limpa, segurança JWT, documentação Swagger, e seguindo boas práticas.
+API REST para gerenciamento de pedidos, produtos e pagamentos, utilizando Java 17 e Spring Boot 3.
 
 ---
 
@@ -13,42 +11,77 @@ Projetado com arquitetura limpa, segurança JWT, documentação Swagger, e segui
 - Spring Security (JWT)
 - Spring Data JPA (Hibernate)
 - PostgreSQL
+- RabbitMQ
+- Docker / Docker Compose
 - Lombok
-- Springdoc OpenAPI (Swagger UI)
+- Springdoc OpenAPI (Swagger)
 
 ---
 
-## 🔧 Instalação
+## 🔧 Instalação Local
 
-1. Clone o repositório:
+### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/OtavioIdem/springboot.git
+git clone https://github.com/seu-usuario/orders-api.git
+cd orders-api
 ```
 
-2. Configure o banco de dados PostgreSQL:
+### 2. Configure seu Banco de Dados PostgreSQL
 
-Crie um banco chamado `orders_db`.
+Antes de rodar a aplicação, é preciso criar seu próprio banco.
 
-Exemplo de configuração no `application.properties`:
+1. Suba um PostgreSQL localmente ou via Docker.
+2. Crie um banco de dados chamado, por exemplo, `orders_db`.
+
+**Exemplo de comandos SQL:**
+
+```sql
+CREATE DATABASE orders_db;
+CREATE USER meu_usuario WITH ENCRYPTED PASSWORD 'minha_senha';
+GRANT ALL PRIVILEGES ON DATABASE orders_db TO meu_usuario;
+```
+
+3. Ajuste as credenciais no arquivo `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/orders_db
-spring.datasource.username=postgres
-spring.datasource.password=123456
+spring.datasource.username=meu_usuario
+spring.datasource.password=minha_senha
+spring.jpa.hibernate.ddl-auto=update
 ```
 
-3. Rode o projeto:
+
+### 3. Configurar RabbitMQ (opcional)
+
+Caso queira testar eventos, suba um container RabbitMQ localmente ou utilize o Docker Compose.
+
+- URL padrão: `http://localhost:15672`
+- Usuário: `guest` / Senha: `guest`
+
+### 4. Rodar a aplicação
+
+Se quiser rodar localmente:
 
 ```bash
-mvn clean spring-boot:run
+mvn clean install
+mvn spring-boot:run
+```
+
+Se quiser rodar via Docker Compose:
+
+```bash
+docker-compose up --build
 ```
 
 ---
 
-## 🔐 Autenticação (JWT)
+## 🔐 Autenticação JWT
 
-### Usuários padrões para login:
+- **POST /api/auth/login**
+- Parâmetros: `username`, `password`
+
+Usuários disponíveis:
 
 | Usuário | Senha | Perfil |
 |----------|-------|--------|
@@ -56,25 +89,13 @@ mvn clean spring-boot:run
 | cliente  | cliente123 | CLIENTE |
 | operador | operador123 | OPERADOR |
 
-### Gerar Token:
-
-**POST** `/api/auth/login`
-
-Enviar parâmetros:
-
-```http
-POST /api/auth/login?username=admin&password=admin123
-```
-
 Retorno:
 
 ```json
-"eyJhbGciOiJIUzI1NiJ9..."
+"Bearer eyJhbGciOiJIUzI1NiJ9..."
 ```
 
-### Usar o Token:
-
-Enviar o token no Header das requisições:
+Use esse token no header das chamadas:
 
 ```http
 Authorization: Bearer seu_token_aqui
@@ -85,71 +106,62 @@ Authorization: Bearer seu_token_aqui
 ## 🔹 Endpoints Principais
 
 ### Produtos
-
-- `GET /api/products`
-- `POST /api/products`
-- `PUT /api/products/{id}`
-- `DELETE /api/products/{id}`
-- `GET /api/products/search/name?name=batata`
-- `GET /api/products/search/category?category=alimento`
-- `GET /api/products/search/price?min=10&max=100`
+- CRUD de produtos
+- Filtros por nome, categoria e preço
 
 ### Pedidos
-
-- `GET /api/orders`
-- `POST /api/orders`
-- `PUT /api/orders/{id}`
-- `DELETE /api/orders/{id}`
-- `GET /api/orders/search/status?status=PAGO`
-- `GET /api/orders/search/date?start=2025-04-01T00:00:00&end=2025-04-30T23:59:59`
-- `GET /api/orders/search/total?min=100&max=500`
+- CRUD de pedidos
+- Cálculo de frete fixo + desconto
+- Filtros por status, data e valor
 
 ### Pagamentos
-
-- `POST /api/payments`
-- `GET /api/payments/{id}`
+- CRUD de pagamentos
 
 ### Relatórios
-
-- `GET /api/reports/sales-by-date?start=2025-04-01T00:00:00&end=2025-04-30T23:59:59`
-- `GET /api/reports/sales-by-status?status=PAGO`
-
+- Vendas por data
+- Vendas por status
 
 ---
 
-## 📘 Swagger UI (Documentação da API)
+## 📘 Documentação Swagger
 
-Após subir o projeto:
-
-Acesse:
+Acesse a documentação da API em:
 
 ```http
 http://localhost:8080/swagger-ui.html
 ```
 
-Você pode testar todos os endpoints diretamente pela interface Swagger.
+Lá você pode testar todos os endpoints.
 
 ---
 
-## 🌐 Configurações Avançadas (Opcional)
+## 📦 Build Docker Manual (opcional)
 
-- Implementar testes unitários e de integração
-- Parametrizar taxas de frete e desconto
-- Integrar RabbitMQ para mensageria
-- Dockerizar aplicação e PostgreSQL
-- CI/CD com GitHub Actions
+```bash
+mvn clean install
+```
 
----
+```bash
+docker build -t orders-api .
+```
 
-## ✨ Projeto desenvolvido com foco em:
-
-- Arquitetura limpa
-- Padrões SOLID
-- Segurança JWT
-- Código limpo e organizado
-- Documentação automática
+```bash
+docker run -p 8080:8080 orders-api
+```
 
 ---
 
-# 🚀 Bom desenvolvimento!
+## 💪 Pipeline CI/CD
+
+- Estava configurado o Github Actions, porém foi removido por questão de conflito com o repositório
+<!-- O projeto já está preparado para GitHub Actions:
+- Build do projeto
+- Execução dos testes automáticos
+- Verificação a cada push ou pull request na branch `main` -->
+
+---
+
+## ✨ Observação Final
+
+> "Você pode manter as configurações de frete e desconto fixas no código para testes, mas para produção o ideal é parametrizar no `application.properties` para maior flexibilidade."
 
