@@ -97,23 +97,10 @@
         <scope>test</scope>
     </dependency>
 
-    <!-- Spring Boot Web -->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
     <!-- Spring Data JPA (inclui Hibernate) -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-
-    <!-- Banco de dados (PostgreSQL por exemplo) -->
-    <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <scope>runtime</scope>
     </dependency>
 
     <!-- Lombok (opcional para reduzir boilerplate) -->
@@ -148,13 +135,6 @@
         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         <version>2.3.0</version>
     </dependency>
-
-    <!-- Dependências para testes -->
-    <!-- <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency> -->
 
     <dependency>
         <groupId>org.mockito</groupId>
